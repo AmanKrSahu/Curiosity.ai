@@ -4,7 +4,8 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
 const replicate = new Replicate({
-    auth: process.env.REPLICATE_API_TOKEN!,
+    // @ts-expect-error
+    auth: process.env.REPLICATE_API_TOKEN,
 });
 
 
