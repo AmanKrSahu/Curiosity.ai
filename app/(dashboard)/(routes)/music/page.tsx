@@ -17,8 +17,6 @@ import { Heading } from "@/components/heading";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
 
-import { ChatCompletionRequestMessage } from "openai";
-
 const MusicPage = () => {
     const router = useRouter();
 
