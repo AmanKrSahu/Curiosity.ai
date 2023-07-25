@@ -1,43 +1,50 @@
 import Replicate from "replicate";
-
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
-const replicate = new Replicate({
-    // @ts-ignore
-    auth: process.env.REPLICATE_API_TOKEN,
-});
+let replicate: Replicate;
 
+// Wrap the instantiation in a try-catch block to handle errors related to the environment variable.
+try {
+    const replicateToken = process.env.REPLICATE_API_TOKEN;
+    if (!replicateToken) {
+        throw new Error("Replicate API token is missing");
+    }
 
-export async function POST(
-    req: Request
-) {
-    try{
+    replicate = new Replicate({
+        auth: replicateToken,
+    });
+} catch (error) {
+    console.error("Error setting up Replicate:", error);
+    // Handle the error, such as returning an error response to the client.
+}
+
+export async function POST(req: Request) {
+    try {
         const { userId } = auth();
         const body = await req.json();
         const { prompt } = body;
 
-        if(!userId){
-            return new NextResponse("Unauthorised", {status: 401});
+        if (!userId) {
+            return new NextResponse("Unauthorised", { status: 401 });
         }
 
-        if(!prompt){
-            return new NextResponse("Prompt is required", {status: 400});
+        if (!prompt) {
+            return new NextResponse("Prompt is required", { status: 400 });
         }
 
         const response = await replicate.run(
             "riffusion/riffusion:8cf61ea6c56afd61d8f5b9ffd14d7c216c0a93844ce2d82ac1c9ecc9c7f24e05",
             {
-              input: {
-                prompt_a: prompt
-              }
+                input: {
+                    prompt_a: prompt,
+                },
             }
-          );
+        );
 
         return NextResponse.json(response);
+    } catch (error) {
+        console.error("[MUSIC_ERROR]", error);
+        return new NextResponse("Internal error", { status: 500 });
     }
-    catch(error){
-        console.log('[MUSIC_ERROR]', error);
-        return new NextResponse("Internal error", {status: 500});
-    }
-};
+}
