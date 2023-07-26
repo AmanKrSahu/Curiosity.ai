@@ -23,7 +23,11 @@ import { BotAvatar } from "@/components/bot-avatar";
 
 import { ChatCompletionRequestMessage } from "openai";
 
+import { useProModal } from "@/hooks/use-pro-modal";
+
 const CodePage = () => {
+    const proModal = useProModal();
+
     const router = useRouter();
 
     const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
@@ -55,8 +59,9 @@ const CodePage = () => {
             form.reset();
         }
         catch(error: any){
-            // TODO: Open Pro Modal
-            console.log(error);
+            if(error?.response?.status === 403){
+                proModal.onOpen();
+            }
         }
         finally{
             router.refresh();
