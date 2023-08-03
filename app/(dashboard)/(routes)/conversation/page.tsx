@@ -19,6 +19,7 @@ import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
+import { toast } from "react-hot-toast";
 
 import { ChatCompletionRequestMessage } from "openai";
 
@@ -60,6 +61,9 @@ const ConversationPage = () => {
         catch(error: any){
             if(error?.response?.status === 403){
                 proModal.onOpen();
+            }
+            else{
+                toast.error("Something went wrong");
             }
         }
         finally{
